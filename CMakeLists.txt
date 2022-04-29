@@ -1,28 +1,41 @@
 cmake_minimum_required(VERSION 3.16)
+
 project(TemplateODB)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -Wall")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pthread")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
-include(FindODB.cmake)
+find_package(ODB REQUIRED COMPONENTS pgsql)
 
-file(GLOB OdbCMake_ODB_HEADERS CONFIGURE_DEPENDS
-        ${PROJECT_SOURCE_DIR}/odb/*.h)
+include(${ODB_USE_FILE})
 
-file(GLOB OdbCMake_ODB_INCLUDES CONFIGURE_DEPENDS
-        ${PROJECT_SOURCE_DIR}/odb/*.hxx)
+file(GLOB INCLUDE ${PROJECT_SOURCE_DIR}/include/*.h)
+file(GLOB SRC ${PROJECT_SOURCE_DIR}/src/*.cpp)
+file(GLOB ODB CONFIGURE_DEPENDS ${PROJECT_SOURCE_DIR}/include/odb/*.h)
 
-odb_compile(
+odb_compile(SRC
+        FILES ${ODB}
+        DB pgsql
         GENERATE_QUERY GENERATE_SESSION GENERATE_SCHEMA
-        DB pgsql STANDARD c++17
-        HEADER ${OdbCMake_ODB_HEADERS}
-        INCLUDE ${OdbCMake_ODB_INCLUDES}
-        DEFAULT_POINTER std::shared_ptr)
+        STANDARD c++17)
 
-add_executable(${PROJECT_NAME} main.cpp
-        odb/Person.h
-        ${OdbCMake_SOURCES} ${OdbCMake_ODB_HEADERS})
+# copy all odb headers to odb_gen
+# because otherwise the generated _odb.h files cant find the original header
+file(COPY ${ODB} DESTINATION ${CMAKE_BINARY_DIR}/odb_gen)
 
-target_link_libraries(${PROJECT_NAME} odb-pgsql odb pqxx pq)
+add_executable(${PROJECT_NAME}
+        ${INCLUDE}
+        ${SRC}
+        ${ODB})
+
+target_link_libraries(${PROJECT_NAME} ${ODB_LIBRARIES})
+
+target_include_directories(${PROJECT_NAME}
+        PRIVATE
+        ${ODB_INCLUDE_DIRS}
+        ${ODB_COMPILE_OUTPUT_DIR})
+
+add_custom_command(TARGET ${PROJECT_NAME}
+        POST_BUILD
+        COMMAND cp ${CMAKE_BINARY_DIR}/odb_gen/*.sql ${PROJECT_SOURCE_DIR}/sql)
