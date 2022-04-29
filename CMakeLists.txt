@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.16) # TODO: change cmake version here
 
-project(TemplateODB)
+project(TemplateODB) # TODO: change project name here
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 17) # TODO: change c++ version here
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
@@ -18,7 +18,7 @@ odb_compile(SRC
         FILES ${ODB}
         DB pgsql
         GENERATE_QUERY GENERATE_SESSION GENERATE_SCHEMA
-        STANDARD c++17)
+        STANDARD c++17) # TODO: change c++ version here
 
 # copy all odb headers to odb_gen
 # because otherwise the generated _odb.h files cant find the original header
@@ -29,7 +29,7 @@ add_executable(${PROJECT_NAME}
         ${SRC}
         ${ODB})
 
-target_link_libraries(${PROJECT_NAME} ${ODB_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${ODB_LIBRARIES}) # TODO: add libraries here
 
 target_include_directories(${PROJECT_NAME}
         PRIVATE
