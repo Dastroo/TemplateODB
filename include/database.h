@@ -13,11 +13,9 @@
 #include <cstdlib>  // std::exit
 #include <iostream>
 
-#include <odb/database.hxx>
-
 #include <odb/pgsql/database.hxx>
 
-inline std::unique_ptr<odb::database>
+inline std::shared_ptr<odb::database>
 create_database(int &argc, char *argv[]) {
     using namespace std;
     using namespace odb::core;
@@ -31,7 +29,7 @@ create_database(int &argc, char *argv[]) {
         exit(0);
     }
 
-    unique_ptr<database> db (new odb::pgsql::database (argc, argv));
+    shared_ptr<database> db (new odb::pgsql::database (argc, argv));
 
 
     return db;

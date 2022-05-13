@@ -4,20 +4,23 @@ project(TemplateODB) # TODO: change project name here
 
 set(CMAKE_CXX_STANDARD 17) # TODO: change c++ version here
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-unknown-pragmas")
+
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 find_package(ODB REQUIRED COMPONENTS pgsql)
 
 include(${ODB_USE_FILE})
 
-file(GLOB INCLUDE ${PROJECT_SOURCE_DIR}/include/*.h)
-file(GLOB SRC ${PROJECT_SOURCE_DIR}/src/*.cpp)
+file(GLOB INCLUDE CONFIGURE_DEPENDS ${PROJECT_SOURCE_DIR}/include/*.h)
+file(GLOB SRC CONFIGURE_DEPENDS ${PROJECT_SOURCE_DIR}/src/*.cpp)
 file(GLOB ODB CONFIGURE_DEPENDS ${PROJECT_SOURCE_DIR}/include/odb/*.h)
 
 odb_compile(SRC
         FILES ${ODB}
         DB pgsql
         GENERATE_QUERY GENERATE_SESSION GENERATE_SCHEMA
+        DEFAULT_POINTER std::shared_ptr
         STANDARD c++17) # TODO: change c++ version here
 
 # copy all odb headers to odb_gen

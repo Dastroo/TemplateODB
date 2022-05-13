@@ -3,8 +3,6 @@
 
 #include <memory>   // std::auto_ptr
 #include <iostream>
-
-#include <odb/transaction.hxx>
 #include <fstream>
 
 #include "include/database.h" // create_database
@@ -15,7 +13,7 @@
 using namespace std;
 using namespace odb::core;
 
-void create_table(const std::unique_ptr<database> &db, const std::string &sql_path) {
+void create_table(const std::shared_ptr<database> &db, const std::string &sql_path) {
     std::ifstream ifs(sql_path);
     std::string content((std::istreambuf_iterator<char>(ifs)),
                         (std::istreambuf_iterator<char>()));
@@ -28,7 +26,7 @@ void create_table(const std::unique_ptr<database> &db, const std::string &sql_pa
 int
 main(int argc, char *argv[]) {
     try {
-        unique_ptr<database> db(create_database(argc, argv));
+        shared_ptr<database> db(create_database(argc, argv));
 
         unsigned long john_id, joe_id;
 
@@ -72,7 +70,7 @@ main(int argc, char *argv[]) {
         {
             transaction t(db->begin());
 
-            unique_ptr<person> joe(db->load<person>(joe_id));
+            shared_ptr<person> joe(db->load<person>(joe_id));
             joe->age(joe->age() + 1);
             db->update(*joe);
 
