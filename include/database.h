@@ -20,7 +20,7 @@ create_database(int &argc, char *argv[]) {
     using namespace std;
     using namespace odb::core;
 
-    if (argc > 1 && argv[1] == string("--help")) {
+    if (argc > 1 && argv[1] == std::string("--help")) {
         cout << "Usage: " << argv[0] << " [options]" << endl
              << "Options:" << endl;
 

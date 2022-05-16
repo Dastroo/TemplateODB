@@ -10,6 +10,17 @@
 
 #pragma db object
 class person {
+    friend class odb::access;
+
+    person() {}
+
+#pragma db id auto
+    unsigned long id_;
+
+    std::string first_;
+    std::string last_;
+    unsigned short age_;
+
 public:
     person(const std::string &first,
            const std::string &last,
@@ -35,18 +46,6 @@ public:
     age(unsigned short age) {
         age_ = age;
     }
-
-private:
-    friend class odb::access;
-
-    person() {}
-
-#pragma db id auto
-    unsigned long id_;
-
-    std::string first_;
-    std::string last_;
-    unsigned short age_;
 };
 
 #pragma db view object(person)

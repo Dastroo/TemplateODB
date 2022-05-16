@@ -16,7 +16,7 @@ using namespace odb::core;
 void create_table(const std::shared_ptr<database> &db, const std::string &sql_path) {
     std::ifstream ifs(sql_path);
     std::string content((std::istreambuf_iterator<char>(ifs)),
-                        (std::istreambuf_iterator<char>()));
+                        std::istreambuf_iterator<char>());
 
     transaction t(db->begin());
     db->execute(content);
